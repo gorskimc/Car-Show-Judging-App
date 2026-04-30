@@ -1,0 +1,52 @@
+# --- Secrets ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# --- Personal / local-only ---
+CLAUDE.local.md
+.claude/settings.local.json
+
+# --- Dependencies ---
+node_modules/
+.pnp
+.pnp.js
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# --- Build output ---
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.cache/
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Test / coverage ---
+coverage/
+.nyc_output/
+.pytest_cache/
+
+# --- Misc ---
+tmp/
+temp/
