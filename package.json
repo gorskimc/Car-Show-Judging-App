@@ -1,0 +1,21 @@
+{
+  "name": "car-show-judging-app",
+  "version": "0.1.0",
+  "description": "Phone-first PWA for the Corvettes on the Island Corvette show.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "setup-db": "node scripts/setup-db.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.1.1",
+    "pg": "^8.20.0"
+  }
+}
