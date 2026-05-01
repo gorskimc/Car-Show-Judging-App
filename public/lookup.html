@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Car Show Judge — Lookup</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1 id="welcome">Loading…</h1>
+      <p class="muted">
+        The car-lookup screen lands in Step 6 of the implementation plan. For
+        now this stub just confirms you're signed in.
+      </p>
+      <button id="logout">Log out</button>
+    </main>
+    <script>
+      (async () => {
+        const r = await fetch('/api/auth/me');
+        if (!r.ok) {
+          window.location.href = '/';
+          return;
+        }
+        const me = await r.json();
+        document.getElementById('welcome').textContent =
+          `Hello, ${me.firstname} ${me.lastname}.`;
+        document.getElementById('logout').addEventListener('click', async () => {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          window.location.href = '/';
+        });
+      })();
+    </script>
+  </body>
+</html>
