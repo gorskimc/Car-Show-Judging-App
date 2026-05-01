@@ -133,6 +133,17 @@ button.secondary:hover {
   background: #f0f0f3;
 }
 
+button.secondary:disabled {
+  background: #f5f5f7;
+  color: #b0b0b5;
+  border-color: #e8e8ec;
+  cursor: not-allowed;
+}
+
+button.secondary:disabled:hover {
+  background: #f5f5f7;
+}
+
 .big-number {
   font-size: 1.6rem;
   text-align: center;
