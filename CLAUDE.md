@@ -43,7 +43,7 @@ A phone-first installable web app (PWA) for the "Corvettes on the Island" Corvet
 ## Project Notes
 
 - **The show is Corvette-specific** — the rubric includes C8-specific notes (frunk + trunk).
-- **Total score = 200 points**: Interior 50 + Exterior 100 + Engine/Engine Bay 40 + Bonus 10. Engine is 40, NOT 50 (the original rubric doc had a typo).
+- **Total score = 200 points**: Interior 50 + Exterior 100 + Engine Bay 40 + Bonus 10. The original rubric Word doc has typos in TWO section headers that swap these two values — Interior is 50 (not 40) and Engine Bay is 40 (not 50). The subsection point breakdowns in that doc are correct; only the section-level totals are wrong.
 - **Judge enters deductions, not scores.** 0 = perfect for that item. App computes actual scores.
 - **Phase 1 connectivity:** online with save-as-you-go after each sub-item. Full offline-mode-with-sync is deferred to v2.
 - **Photo storage Phase 1:** filesystem (`uploads/`). May move to Supabase Storage / S3 later — pending partner conversation.

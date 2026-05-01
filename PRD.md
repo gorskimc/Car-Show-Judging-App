@@ -36,7 +36,7 @@ A phone-first installable web app (PWA) for judges at the "Corvettes on the Isla
 
 1. Judge logs in with first name, last name, and a shared event password (stored in `.env`). Names are normalized (trimmed, title-cased) on save.
 2. Judge enters a car's registration number. App looks it up and displays owner / year / make / model / color for confirmation.
-3. App presents the rubric one section at a time: Interior → Exterior → Engine/Engine Bay → Bonus.
+3. App presents the rubric one section at a time: Interior → Exterior → Engine Bay → Bonus.
 4. Each sub-item shows its name, max points, and a deduction input restricted to ¼-point increments.
 5. When deduction > 0, the app prompts the judge to take a photo using the phone's native camera; the photo is saved with the deduction.
 6. App computes per-sub-item scores (max − deduction), subsection subtotals, section subtotals, and the overall score (out of 200) automatically.
