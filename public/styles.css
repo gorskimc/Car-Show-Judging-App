@@ -95,3 +95,68 @@ button:disabled {
   border-radius: 8px;
   font-size: 0.9rem;
 }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+
+.link-btn {
+  display: inline;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  background: none;
+  color: #cc0000;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-height: 0;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  background: none;
+  color: #b00000;
+}
+
+button.secondary {
+  background: white;
+  color: #1c1c1e;
+  border: 1px solid #d2d2d7;
+  margin-top: 8px;
+}
+
+button.secondary:hover {
+  background: #f0f0f3;
+}
+
+.big-number {
+  font-size: 1.6rem;
+  text-align: center;
+  letter-spacing: 0.05em;
+  padding: 16px;
+}
+
+.car-details {
+  margin: 0 0 20px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 12px;
+  row-gap: 8px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.car-details dt {
+  color: #6b6b70;
+  font-weight: 500;
+}
+
+.car-details dd {
+  margin: 0;
+  color: #1c1c1e;
+  font-weight: 500;
+}

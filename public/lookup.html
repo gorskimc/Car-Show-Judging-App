@@ -6,33 +6,46 @@
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <title>Car Show Judge — Lookup</title>
+    <title>Car Show Judge — Look Up Car</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <main class="card">
-      <h1 id="welcome">Loading…</h1>
-      <p class="muted">
-        The car-lookup screen lands in Step 6 of the implementation plan. For
-        now this stub just confirms you're signed in.
-      </p>
-      <button id="logout">Log out</button>
+      <header class="topbar">
+        <span id="judge-name" class="muted"></span>
+        <button id="logout" class="link-btn" type="button">Log out</button>
+      </header>
+
+      <!-- State 1: enter the registration number -->
+      <section id="entry" hidden>
+        <h1>Enter Registration Number</h1>
+        <p class="muted">From the dash card.</p>
+        <form id="lookup-form" novalidate>
+          <input
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            name="participant"
+            id="participant-input"
+            class="big-number"
+            required
+            autocomplete="off"
+          />
+          <button type="submit">Look Up</button>
+          <p id="lookup-error" class="error" hidden></p>
+        </form>
+      </section>
+
+      <!-- State 2: confirm the right car -->
+      <section id="confirmation" hidden>
+        <h1>Is This The Right Car?</h1>
+        <dl class="car-details" id="car-details"></dl>
+        <button id="start-judging" type="button">Yes — Start Judging</button>
+        <button id="try-again" class="secondary" type="button">
+          No — Try a Different Number
+        </button>
+      </section>
     </main>
-    <script>
-      (async () => {
-        const r = await fetch('/api/auth/me');
-        if (!r.ok) {
-          window.location.href = '/';
-          return;
-        }
-        const me = await r.json();
-        document.getElementById('welcome').textContent =
-          `Hello, ${me.firstname} ${me.lastname}.`;
-        document.getElementById('logout').addEventListener('click', async () => {
-          await fetch('/api/auth/logout', { method: 'POST' });
-          window.location.href = '/';
-        });
-      })();
-    </script>
+    <script src="/lookup.js" defer></script>
   </body>
 </html>

@@ -4,6 +4,7 @@ const session = require('express-session');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
+const registrationsRoutes = require('./routes/registrations');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +36,7 @@ app.use(
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/registrations', registrationsRoutes);
 
 // Static PWA shell
 app.use(express.static(path.join(__dirname, 'public')));
