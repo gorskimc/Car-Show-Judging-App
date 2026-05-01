@@ -1,7 +1,22 @@
+const os = require('os');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
 require('dotenv').config();
+
+// Find the first non-loopback IPv4 address so we can print a URL that
+// other devices on the same Wi-Fi (a phone, say) can actually use.
+function getLanIp() {
+  const ifaces = os.networkInterfaces();
+  for (const name of Object.keys(ifaces)) {
+    for (const iface of ifaces[name] || []) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return null;
+}
 
 const authRoutes = require('./routes/auth');
 const registrationsRoutes = require('./routes/registrations');
@@ -47,5 +62,10 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Car Show Judging App listening on http://localhost:${PORT}`);
+  const lanIp = getLanIp();
+  console.log('Car Show Judging App listening on:');
+  console.log(`  http://localhost:${PORT}    (this Mac)`);
+  if (lanIp) {
+    console.log(`  http://${lanIp}:${PORT}    (other devices on this Wi-Fi)`);
+  }
 });
