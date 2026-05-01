@@ -20,6 +20,8 @@ function getLanIp() {
 
 const authRoutes = require('./routes/auth');
 const registrationsRoutes = require('./routes/registrations');
+const rubricRoutes = require('./routes/rubric');
+const sessionsRoutes = require('./routes/sessions');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -52,6 +54,8 @@ app.use(
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/registrations', registrationsRoutes);
+app.use('/api/rubric', rubricRoutes);
+app.use('/api/sessions', sessionsRoutes);
 
 // Static PWA shell
 app.use(express.static(path.join(__dirname, 'public')));

@@ -97,11 +97,30 @@ lookupForm.addEventListener('submit', async (e) => {
 
 tryAgainBtn.addEventListener('click', showEntry);
 
-startJudgingBtn.addEventListener('click', () => {
-  // Step 7 will replace this with the real judging flow.
-  alert(
-    `Step 7 coming. Would have started judging for participant #${currentCar.participant}.`,
-  );
+startJudgingBtn.addEventListener('click', async () => {
+  startJudgingBtn.disabled = true;
+  try {
+    const r = await fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ participant: currentCar.participant }),
+    });
+    if (r.status === 401) {
+      window.location.href = '/';
+      return;
+    }
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      alert(data.error || 'Could not start judging.');
+      startJudgingBtn.disabled = false;
+      return;
+    }
+    const { session } = await r.json();
+    window.location.href = `/judging.html?session=${session.id}`;
+  } catch (err) {
+    alert('Network error — please try again.');
+    startJudgingBtn.disabled = false;
+  }
 });
 
 logoutBtn.addEventListener('click', async () => {

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Car Show Judge — Judging</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="card judging">
+      <header class="topbar">
+        <span id="judge-name" class="muted"></span>
+        <button id="logout" class="link-btn" type="button">Log out</button>
+      </header>
+
+      <!-- Shared across preview + walkthrough screens -->
+      <div class="progress" id="progress-block" hidden>
+        <span id="progress-text" class="muted"></span>
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <section id="loading">
+        <p class="muted">Loading…</p>
+      </section>
+
+      <!-- Preview screen — shown before each subsection's first item -->
+      <section id="preview" hidden>
+        <p class="breadcrumb" id="preview-section"></p>
+        <h1 id="preview-subsection"></h1>
+        <p class="muted" id="preview-summary"></p>
+        <ol class="preview-list" id="preview-list"></ol>
+        <div class="nav-row">
+          <button type="button" class="secondary" id="preview-prev">← Previous</button>
+          <button type="button" id="preview-begin"></button>
+        </div>
+      </section>
+
+      <!-- Walkthrough screen — one rubric item at a time -->
+      <section id="walkthrough" hidden>
+        <p class="breadcrumb" id="breadcrumb"></p>
+        <h1 id="item-name"></h1>
+        <p class="muted max-pill" id="max-pill"></p>
+
+        <div class="score-input">
+          <p class="input-label" id="input-label"></p>
+          <div class="number-row">
+            <button class="step-btn" type="button" id="dec-btn" aria-label="Decrease">−</button>
+            <div class="big-value" id="display-value">0</div>
+            <button class="step-btn" type="button" id="inc-btn" aria-label="Increase">+</button>
+          </div>
+          <div class="quick-row">
+            <button class="quick-btn" type="button" id="quick-zero"></button>
+            <button class="quick-btn" type="button" id="quick-max"></button>
+          </div>
+          <p class="muted score-readout" id="score-readout"></p>
+        </div>
+
+        <details class="notes">
+          <summary>Notes (optional)</summary>
+          <textarea
+            id="notes"
+            rows="3"
+            placeholder="A short note about this item — e.g., paint chip on left rear quarter."
+          ></textarea>
+        </details>
+
+        <p id="save-status" class="muted save-status"></p>
+
+        <div class="nav-row">
+          <button type="button" class="secondary" id="prev-btn">← Previous</button>
+          <button type="button" id="next-btn">Next →</button>
+        </div>
+      </section>
+
+      <section id="error-state" hidden>
+        <h1>Something went wrong</h1>
+        <p id="error-msg" class="error"></p>
+        <button type="button" id="back-btn" class="secondary">Back to Lookup</button>
+      </section>
+    </main>
+    <script src="/judging.js" defer></script>
+  </body>
+</html>

@@ -1,5 +1,10 @@
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
 require('dotenv').config();
+
+// Return NUMERIC values as JS numbers instead of strings. Our point values
+// only need ~5 digits and ¼-point precision, well within JS Number safety.
+// Without this, deduction_amount and max_points come back as strings.
+types.setTypeParser(types.builtins.NUMERIC, (val) => parseFloat(val));
 
 const baseConfig = {
   host: process.env.PGHOST,
