@@ -45,6 +45,10 @@ const els = {
   quickMax: document.getElementById('quick-max'),
   scoreReadout: document.getElementById('score-readout'),
   notes: document.getElementById('notes'),
+  photoCount: document.getElementById('photo-count'),
+  photoStatus: document.getElementById('photo-status'),
+  photosGrid: document.getElementById('photos-grid'),
+  photoInput: document.getElementById('photo-input'),
   saveStatus: document.getElementById('save-status'),
   prevBtn: document.getElementById('prev-btn'),
   nextBtn: document.getElementById('next-btn'),
@@ -266,6 +270,7 @@ function renderItem(cur) {
   els.scoreReadout.textContent = `Score: ${formatNumber(score)} / ${formatNumber(max)}`;
 
   els.notes.value = cur.deduction.notes || '';
+  renderPhotos();
 
   els.prevBtn.disabled = STATE.index === 0;
   els.nextBtn.textContent =
@@ -299,6 +304,90 @@ function setDisplayed(newDisplayed) {
   els.scoreReadout.textContent = `Score: ${formatNumber(score)} / ${formatNumber(max)}`;
 
   setSaveStatus('• Unsaved', 'dirty');
+}
+
+// Photos ----------------------------------------------------------------
+
+function setPhotoStatus(text, cls, autoClear) {
+  els.photoStatus.textContent = text;
+  els.photoStatus.className = `photo-status muted ${cls || ''}`.trim();
+  els.photoStatus.hidden = !text;
+  if (autoClear) {
+    setTimeout(() => {
+      els.photoStatus.hidden = true;
+      els.photoStatus.textContent = '';
+    }, 1500);
+  }
+}
+
+function renderPhotos() {
+  const cur = getCurrent();
+  if (!cur || cur.type !== 'item') return;
+  const photos = cur.deduction.photos || [];
+  els.photoCount.textContent = photos.length;
+  els.photosGrid.innerHTML = photos
+    .map(
+      (p) =>
+        `<div class="photo-thumb">` +
+        `<img src="/uploads/${escapeHtml(p.filepath)}" alt="Deduction photo" loading="lazy">` +
+        `<button type="button" class="thumb-delete" data-photo-id="${p.id}" aria-label="Delete photo">✕</button>` +
+        `</div>`,
+    )
+    .join('');
+  // Wire delete handlers
+  els.photosGrid.querySelectorAll('.thumb-delete').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.photoId);
+      if (confirm('Delete this photo?')) deletePhoto(id);
+    });
+  });
+}
+
+async function uploadPhoto(file) {
+  const cur = getCurrent();
+  if (!cur || cur.type !== 'item') return;
+
+  setPhotoStatus('Uploading…', 'saving');
+  try {
+    const formData = new FormData();
+    formData.append('photo', file);
+    const r = await fetch(
+      `/api/sessions/${STATE.session.id}/items/${cur.item.id}/photos`,
+      { method: 'POST', body: formData },
+    );
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      setPhotoStatus(`✗ ${data.error || 'Upload failed'}`, 'error');
+      return;
+    }
+    const photo = await r.json();
+    if (!cur.deduction.photos) cur.deduction.photos = [];
+    cur.deduction.photos.push(photo);
+    renderPhotos();
+    setPhotoStatus('Uploaded ✓', 'saved', true);
+  } catch (err) {
+    setPhotoStatus('✗ Network error', 'error');
+  }
+}
+
+async function deletePhoto(photoId) {
+  const cur = getCurrent();
+  if (!cur || cur.type !== 'item') return;
+
+  setPhotoStatus('Deleting…', 'saving');
+  try {
+    const r = await fetch(`/api/photos/${photoId}`, { method: 'DELETE' });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      setPhotoStatus(`✗ ${data.error || 'Delete failed'}`, 'error');
+      return;
+    }
+    cur.deduction.photos = (cur.deduction.photos || []).filter((p) => p.id !== photoId);
+    renderPhotos();
+    setPhotoStatus('Deleted', '', true);
+  } catch (err) {
+    setPhotoStatus('✗ Network error', 'error');
+  }
 }
 
 // Save-as-you-go --------------------------------------------------------
@@ -369,6 +458,12 @@ els.quickZero.addEventListener('click', () => setDisplayed(0));
 els.quickMax.addEventListener('click', () => setDisplayed(getCurrent().item.max_points));
 
 els.notes.addEventListener('input', () => setSaveStatus('• Unsaved', 'dirty'));
+
+els.photoInput.addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (file) uploadPhoto(file);
+  e.target.value = ''; // reset so the same file can be re-selected after delete
+});
 
 els.prevBtn.addEventListener('click', () => navigate(-1));
 els.nextBtn.addEventListener('click', () => navigate(1));

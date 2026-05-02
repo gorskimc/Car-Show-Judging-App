@@ -4,15 +4,38 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Helper: fetch a session row + its deductions (all 71 once seeded).
+// Helper: fetch a session row + its deductions (all 71 once seeded), with
+// photos pre-grouped onto each deduction row so the frontend can render
+// thumbnails without an extra round trip per item.
 async function loadSession(sessionId) {
-  const [sessionRes, deductionsRes] = await Promise.all([
+  const [sessionRes, deductionsRes, photosRes] = await Promise.all([
     judgingPool.query('SELECT * FROM judging_sessions WHERE id = $1', [sessionId]),
     judgingPool.query(
       'SELECT * FROM deductions WHERE judging_session_id = $1 ORDER BY rubric_item_id',
       [sessionId],
     ),
+    judgingPool.query(
+      `SELECT p.*
+         FROM photos p
+         JOIN deductions d ON d.id = p.deduction_id
+        WHERE d.judging_session_id = $1
+        ORDER BY p.id`,
+      [sessionId],
+    ),
   ]);
+
+  const photosByDeductionId = new Map();
+  for (const p of photosRes.rows) {
+    if (!photosByDeductionId.has(p.deduction_id)) {
+      photosByDeductionId.set(p.deduction_id, []);
+    }
+    photosByDeductionId.get(p.deduction_id).push(p);
+  }
+
+  for (const d of deductionsRes.rows) {
+    d.photos = photosByDeductionId.get(d.id) || [];
+  }
+
   return {
     session: sessionRes.rows[0],
     deductions: deductionsRes.rows,

@@ -69,6 +69,26 @@
           ></textarea>
         </details>
 
+        <div class="photos">
+          <div class="photos-header">
+            <span class="photos-label">
+              Photos (<span id="photo-count">0</span>)
+            </span>
+            <span id="photo-status" class="photo-status muted" hidden></span>
+          </div>
+          <div class="photos-grid" id="photos-grid"></div>
+          <label class="add-photo-btn">
+            + Add Photo
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              id="photo-input"
+              hidden
+            />
+          </label>
+        </div>
+
         <p id="save-status" class="muted save-status"></p>
 
         <div class="nav-row">

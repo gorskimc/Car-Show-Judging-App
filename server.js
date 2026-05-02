@@ -22,6 +22,7 @@ const authRoutes = require('./routes/auth');
 const registrationsRoutes = require('./routes/registrations');
 const rubricRoutes = require('./routes/rubric');
 const sessionsRoutes = require('./routes/sessions');
+const photosRoutes = require('./routes/photos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -56,6 +57,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/registrations', registrationsRoutes);
 app.use('/api/rubric', rubricRoutes);
 app.use('/api/sessions', sessionsRoutes);
+// photos has both /api/sessions/.../photos (upload, scoped) and /api/photos/:id (delete, flat)
+app.use('/api', photosRoutes);
+
+// Public static serve for uploaded photos. Filenames are random UUIDs, so
+// URLs are unguessable; we deliberately don't gate this with auth (Q1a).
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Static PWA shell
 app.use(express.static(path.join(__dirname, 'public')));

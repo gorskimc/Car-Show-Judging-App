@@ -15,6 +15,10 @@ body {
   background: #f5f5f7;
   color: #1c1c1e;
   -webkit-font-smoothing: antialiased;
+  /* Disable iOS Safari's double-tap-to-zoom on rapid taps. Pinch-zoom still
+     works (accessibility) — this only kills the unintended zoom from quick
+     button presses. */
+  touch-action: manipulation;
 }
 
 .card {
@@ -329,7 +333,8 @@ button.secondary:disabled:hover {
   min-height: 80px;
   margin-top: 12px;
   padding: 8px 10px;
-  font-size: 0.95rem;
+  /* Stay at 16px+ to prevent iOS auto-zoom on focus. */
+  font-size: 1rem;
   font-family: inherit;
   border: 1px solid #d2d2d7;
   border-radius: 6px;
@@ -358,6 +363,111 @@ button.secondary:disabled:hover {
   flex: 1;
   margin: 0;
   width: auto;
+}
+
+/* --- Photos --- */
+
+.photos {
+  margin: 16px 0;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e8e8ec;
+  border-radius: 8px;
+}
+
+.photos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.photos-label {
+  font-weight: 500;
+  color: #6b6b70;
+}
+
+.photo-status {
+  font-size: 0.85rem;
+}
+
+.photo-status.saving { color: #6b6b70; }
+.photo-status.saved  { color: #2e7d32; }
+.photo-status.error  { color: #cc0000; }
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.photos-grid:empty {
+  display: none;
+}
+
+.photo-thumb {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f0f0f3;
+}
+
+.photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumb-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  min-height: 26px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border-radius: 50%;
+  border: none;
+  width: auto;
+  cursor: pointer;
+}
+
+.thumb-delete:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.add-photo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+  background: #f0f0f3;
+  color: #1c1c1e;
+  border: 1px dashed #b0b0b5;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+  user-select: none;
+}
+
+.add-photo-btn:hover {
+  background: #e0e0e6;
 }
 
 /* --- Subsection preview screen --- */

@@ -50,3 +50,6 @@ coverage/
 # --- Misc ---
 tmp/
 temp/
+
+# --- User-uploaded files (judge photos) ---
+uploads/
