@@ -491,6 +491,11 @@ button.secondary:disabled:hover {
   margin-bottom: 4px;
 }
 
+.car-photo-count {
+  margin-top: 6px;
+  font-size: 0.85rem;
+}
+
 .section-cards {
   margin-bottom: 16px;
 }

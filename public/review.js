@@ -117,8 +117,16 @@ async function init() {
   showSection('review');
 }
 
+function totalPhotoCount() {
+  let n = 0;
+  for (const d of STATE.deductions) n += (d.photos || []).length;
+  return n;
+}
+
 function renderReview() {
-  // Car summary
+  const totalPhotos = totalPhotoCount();
+
+  // Car summary + total photo count
   if (STATE.car) {
     const c = STATE.car;
     els.carSummary.innerHTML =
@@ -126,7 +134,8 @@ function renderReview() {
       `<div class="muted">${escapeHtml(`${c.year || ''} ${c.make || ''} ${c.model || ''}`.trim())}` +
       (c.color ? ` · ${escapeHtml(c.color)}` : '') +
       (c.generation ? ` · ${escapeHtml(c.generation)}` : '') +
-      `</div>`;
+      `</div>` +
+      `<div class="muted car-photo-count">📷 Photos attached: <strong>${totalPhotos}</strong></div>`;
   }
 
   const dedByItem = new Map();
@@ -137,6 +146,7 @@ function renderReview() {
 
   els.sectionCards.innerHTML = STATE.rubric.sections.map((section) => {
     let sectionDed = 0;
+    let sectionPhotos = 0;
     const sectionMax = Number(section.max_points);
 
     const subsHtml = section.subsections.map((sub) => {
@@ -148,6 +158,7 @@ function renderReview() {
         subDed += ded;
         sectionDed += ded;
         subMax += Number(item.max_points);
+        sectionPhotos += d && d.photos ? d.photos.length : 0;
         const itemScore = quarterRound(Number(item.max_points) - ded);
         const photoCount = d && d.photos ? d.photos.length : 0;
         const photoBadge = photoCount > 0
@@ -175,9 +186,13 @@ function renderReview() {
     totalScore += sectionScore;
     totalMax += sectionMax;
 
+    const sectionPhotoBadge = sectionPhotos > 0
+      ? `<span class="badge photo-badge">📷 ${sectionPhotos}</span>`
+      : '';
+
     return `<details class="section-card">
       <summary>
-        <span class="section-name">${escapeHtml(section.name)}</span>
+        <span class="section-name">${escapeHtml(section.name)}${sectionPhotoBadge}</span>
         <span class="section-score">${formatNumber(sectionScore)} / ${formatNumber(sectionMax)}</span>
       </summary>
       <div class="section-body">${subsHtml}</div>
@@ -230,11 +245,14 @@ function renderDone() {
   if (STATE.session.submitted_at) {
     els.doneTime.textContent = new Date(STATE.session.submitted_at).toLocaleString();
   }
+  const totalPhotos = totalPhotoCount();
   if (STATE.car) {
     const c = STATE.car;
-    els.doneCar.textContent =
+    const carLine =
       `#${c.participant} — ${(c.firstname || '')} ${(c.lastname || '')}`.trim() +
       `, ${(c.year || '')} ${(c.make || '')} ${(c.model || '')}`.trim();
+    els.doneCar.innerHTML =
+      `${escapeHtml(carLine)}<br><span>📷 ${totalPhotos} photo${totalPhotos === 1 ? '' : 's'} submitted</span>`;
   }
 }
 
