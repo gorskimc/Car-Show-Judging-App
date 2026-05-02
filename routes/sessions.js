@@ -66,10 +66,13 @@ router.post('/', requireAuth, async (req, res) => {
 
   // Find the active show.
   const showRes = await judgingPool.query(
-    'SELECT id FROM shows WHERE is_active = true LIMIT 1',
+    'SELECT id, is_locked FROM shows WHERE is_active = true LIMIT 1',
   );
   if (showRes.rows.length === 0) {
     return res.status(404).json({ error: 'No active show' });
+  }
+  if (showRes.rows[0].is_locked) {
+    return res.status(409).json({ error: 'Show is locked — no new judging.' });
   }
   const showId = showRes.rows[0].id;
 
@@ -181,7 +184,10 @@ router.patch('/:sessionId/submit', requireAuth, async (req, res) => {
   }
 
   const sessionRow = await judgingPool.query(
-    'SELECT id, judge_id, is_complete, show_id FROM judging_sessions WHERE id = $1',
+    `SELECT s.id, s.judge_id, s.is_complete, s.show_id, sh.is_locked
+       FROM judging_sessions s
+       JOIN shows sh ON sh.id = s.show_id
+      WHERE s.id = $1`,
     [sessionId],
   );
   if (sessionRow.rows.length === 0) {
@@ -192,6 +198,9 @@ router.patch('/:sessionId/submit', requireAuth, async (req, res) => {
   }
   if (sessionRow.rows[0].is_complete) {
     return res.status(409).json({ error: 'Session is already submitted' });
+  }
+  if (sessionRow.rows[0].is_locked) {
+    return res.status(409).json({ error: 'Show is locked — cannot submit.' });
   }
   const showId = sessionRow.rows[0].show_id;
 
@@ -272,9 +281,12 @@ router.patch('/:sessionId/items/:rubricItemId', requireAuth, async (req, res) =>
     return res.status(400).json({ error: 'Invalid session or item id' });
   }
 
-  // Verify ownership and not-yet-submitted.
+  // Verify ownership, not-yet-submitted, and show not locked.
   const sessionRow = await judgingPool.query(
-    'SELECT id, judge_id, is_complete FROM judging_sessions WHERE id = $1',
+    `SELECT s.id, s.judge_id, s.is_complete, sh.is_locked
+       FROM judging_sessions s
+       JOIN shows sh ON sh.id = s.show_id
+      WHERE s.id = $1`,
     [sessionId],
   );
   if (sessionRow.rows.length === 0) {
@@ -287,6 +299,9 @@ router.patch('/:sessionId/items/:rubricItemId', requireAuth, async (req, res) =>
     return res
       .status(409)
       .json({ error: 'Session is submitted — cannot edit further' });
+  }
+  if (sessionRow.rows[0].is_locked) {
+    return res.status(409).json({ error: 'Show is locked — cannot edit further.' });
   }
 
   try {

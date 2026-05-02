@@ -63,7 +63,10 @@ router.post(
 
     try {
       const sessionRow = await judgingPool.query(
-        'SELECT id, judge_id, is_complete FROM judging_sessions WHERE id = $1',
+        `SELECT s.id, s.judge_id, s.is_complete, sh.is_locked
+           FROM judging_sessions s
+           JOIN shows sh ON sh.id = s.show_id
+          WHERE s.id = $1`,
         [sessionId],
       );
       if (sessionRow.rows.length === 0) {
@@ -77,6 +80,10 @@ router.post(
       if (sessionRow.rows[0].is_complete) {
         await unlinkSafe(req.file.path);
         return res.status(409).json({ error: 'Session is submitted — cannot add photos' });
+      }
+      if (sessionRow.rows[0].is_locked) {
+        await unlinkSafe(req.file.path);
+        return res.status(409).json({ error: 'Show is locked — cannot add photos.' });
       }
 
       const deductionRow = await judgingPool.query(
@@ -119,10 +126,11 @@ router.delete('/photos/:photoId', requireAuth, async (req, res) => {
   }
 
   const result = await judgingPool.query(
-    `SELECT p.id, p.filepath, s.judge_id, s.is_complete
+    `SELECT p.id, p.filepath, s.judge_id, s.is_complete, sh.is_locked
        FROM photos p
        JOIN deductions d ON d.id = p.deduction_id
        JOIN judging_sessions s ON s.id = d.judging_session_id
+       JOIN shows sh ON sh.id = s.show_id
       WHERE p.id = $1`,
     [photoId],
   );
@@ -135,6 +143,9 @@ router.delete('/photos/:photoId', requireAuth, async (req, res) => {
   }
   if (result.rows[0].is_complete) {
     return res.status(409).json({ error: 'Session is submitted — cannot delete photos' });
+  }
+  if (result.rows[0].is_locked) {
+    return res.status(409).json({ error: 'Show is locked — cannot delete photos.' });
   }
 
   const filepath = path.join(UPLOAD_DIR, result.rows[0].filepath);
