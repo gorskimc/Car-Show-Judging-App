@@ -167,6 +167,98 @@ router.get('/:sessionId', requireAuth, async (req, res) => {
   return res.json(await loadSession(sessionId));
 });
 
+// PATCH /api/sessions/:sessionId/submit
+// Body: { judge_notes? }
+// Final submit: aggregates deductions per section, computes scores, marks
+// the session complete. After submit, deductions can no longer be edited.
+router.patch('/:sessionId/submit', requireAuth, async (req, res) => {
+  const judgeId = req.session.judgeId;
+  const sessionId = Number(req.params.sessionId);
+  const judge_notes = (req.body && req.body.judge_notes) || null;
+
+  if (!Number.isInteger(sessionId) || sessionId <= 0) {
+    return res.status(400).json({ error: 'Invalid session id' });
+  }
+
+  const sessionRow = await judgingPool.query(
+    'SELECT id, judge_id, is_complete, show_id FROM judging_sessions WHERE id = $1',
+    [sessionId],
+  );
+  if (sessionRow.rows.length === 0) {
+    return res.status(404).json({ error: 'Session not found' });
+  }
+  if (sessionRow.rows[0].judge_id !== judgeId) {
+    return res.status(403).json({ error: 'Session belongs to another judge' });
+  }
+  if (sessionRow.rows[0].is_complete) {
+    return res.status(409).json({ error: 'Session is already submitted' });
+  }
+  const showId = sessionRow.rows[0].show_id;
+
+  const [aggResult, sectionsResult] = await Promise.all([
+    judgingPool.query(
+      `SELECT frozen_section_name, SUM(deduction_amount) AS total_deduction
+         FROM deductions
+        WHERE judging_session_id = $1
+        GROUP BY frozen_section_name`,
+      [sessionId],
+    ),
+    judgingPool.query(
+      'SELECT name, max_points FROM rubric_sections WHERE show_id = $1',
+      [showId],
+    ),
+  ]);
+
+  const sectionMax = new Map();
+  for (const s of sectionsResult.rows) sectionMax.set(s.name, Number(s.max_points));
+
+  const sectionDed = new Map();
+  for (const r of aggResult.rows) {
+    sectionDed.set(r.frozen_section_name, Number(r.total_deduction));
+  }
+
+  // Per-section scores. The four subtotal columns hardcode the Corvette
+  // show's section names — this is the v1 tradeoff captured in the schema doc.
+  const interior_score   = (sectionMax.get('Interior')   || 0) - (sectionDed.get('Interior')   || 0);
+  const exterior_score   = (sectionMax.get('Exterior')   || 0) - (sectionDed.get('Exterior')   || 0);
+  const engine_bay_score = (sectionMax.get('Engine Bay') || 0) - (sectionDed.get('Engine Bay') || 0);
+  const bonus_score      = (sectionMax.get('Bonus')      || 0) - (sectionDed.get('Bonus')      || 0);
+
+  let total_max = 0;
+  for (const v of sectionMax.values()) total_max += v;
+  let total_deductions = 0;
+  for (const v of sectionDed.values()) total_deductions += v;
+  const total_score = total_max - total_deductions;
+
+  const updated = await judgingPool.query(
+    `UPDATE judging_sessions
+        SET is_complete = true,
+            submitted_at = NOW(),
+            total_deductions = $1,
+            total_score = $2,
+            interior_score = $3,
+            exterior_score = $4,
+            engine_bay_score = $5,
+            bonus_score = $6,
+            judge_notes = COALESCE($7, judge_notes),
+            updated_at = NOW()
+      WHERE id = $8
+      RETURNING *`,
+    [
+      total_deductions,
+      total_score,
+      interior_score,
+      exterior_score,
+      engine_bay_score,
+      bonus_score,
+      judge_notes,
+      sessionId,
+    ],
+  );
+
+  res.json(updated.rows[0]);
+});
+
 // PATCH /api/sessions/:sessionId/items/:rubricItemId
 // Body: { deduction_amount?, notes? }
 // Save-as-you-go endpoint. Fired when the judge moves to the next item.

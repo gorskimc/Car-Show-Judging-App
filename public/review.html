@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Car Show Judge — Review &amp; Submit</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="card review">
+      <header class="topbar">
+        <span id="judge-name" class="muted"></span>
+        <button id="logout" class="link-btn" type="button">Log out</button>
+      </header>
+
+      <section id="loading">
+        <p class="muted">Loading…</p>
+      </section>
+
+      <!-- Pre-submit: review state -->
+      <section id="review" hidden>
+        <h1>Review Score</h1>
+
+        <div class="car-summary" id="car-summary"></div>
+
+        <div class="section-cards" id="section-cards"></div>
+
+        <div class="total-card">
+          <div class="total-label">Total Score</div>
+          <div class="total-value">
+            <span id="total-score">—</span>
+            <span class="total-divider">/</span>
+            <span id="total-max">200</span>
+          </div>
+        </div>
+
+        <details class="notes">
+          <summary>Judge notes (optional)</summary>
+          <textarea
+            id="judge-notes"
+            rows="3"
+            placeholder="Holistic comment about the car — e.g., 'Outstanding restoration overall.'"
+          ></textarea>
+        </details>
+
+        <p id="submit-status" class="muted save-status" hidden></p>
+
+        <div class="nav-row">
+          <button type="button" class="secondary" id="edit-more-btn">← Edit More</button>
+          <button type="button" id="submit-btn">Submit Final Score</button>
+        </div>
+      </section>
+
+      <!-- Post-submit: done state -->
+      <section id="done" hidden>
+        <div class="done-summary">
+          <h1 class="done-heading">Score Submitted ✓</h1>
+          <div class="total-card">
+            <div class="total-label">Final Score</div>
+            <div class="total-value">
+              <span id="done-total">—</span>
+              <span class="total-divider">/</span>
+              <span>200</span>
+            </div>
+          </div>
+          <p class="muted" id="done-car"></p>
+          <p class="muted">Submitted: <span id="done-time"></span></p>
+        </div>
+        <button type="button" id="next-car-btn">Look Up Another Car</button>
+      </section>
+
+      <section id="error-state" hidden>
+        <h1>Something went wrong</h1>
+        <p id="error-msg" class="error"></p>
+        <button type="button" id="back-btn" class="secondary">Back to Lookup</button>
+      </section>
+    </main>
+    <script src="/review.js" defer></script>
+  </body>
+</html>

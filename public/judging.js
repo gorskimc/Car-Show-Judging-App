@@ -443,7 +443,7 @@ async function navigate(direction) {
   const newIndex = STATE.index + direction;
   if (newIndex < 0) return;
   if (newIndex >= STATE.flatItems.length) {
-    alert('Review screen comes in Step 9. All your scores are saved.');
+    window.location.href = `/review.html?session=${STATE.session.id}`;
     return;
   }
   STATE.index = newIndex;

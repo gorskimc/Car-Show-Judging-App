@@ -470,6 +470,175 @@ button.secondary:disabled:hover {
   background: #e0e0e6;
 }
 
+/* --- Review screen --- */
+
+.review h1 {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+}
+
+.car-summary {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e8e8ec;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.car-summary-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.section-cards {
+  margin-bottom: 16px;
+}
+
+.section-card {
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid #e8e8ec;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.section-card summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  font-size: 1rem;
+}
+
+.section-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.section-card[open] summary {
+  border-bottom: 1px solid #e8e8ec;
+}
+
+.section-name {
+  font-weight: 600;
+}
+
+.section-score {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.section-body {
+  padding: 8px 16px 12px;
+}
+
+.sub-block {
+  margin: 12px 0;
+}
+
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  padding: 4px 0;
+  border-bottom: 1px dashed #e8e8ec;
+}
+
+.item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  gap: 8px;
+}
+
+.item-list .item-name {
+  flex: 1;
+}
+
+.item-list .item-score {
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  color: #6b6b70;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.75rem;
+  background: #f0f0f3;
+  border-radius: 10px;
+  color: #6b6b70;
+  white-space: nowrap;
+}
+
+.total-card {
+  margin: 16px 0;
+  padding: 20px 16px;
+  background: #cc0000;
+  color: white;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.total-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+
+.total-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.total-divider {
+  margin: 0 8px;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+/* Done state */
+
+.done-summary {
+  text-align: center;
+  margin: 24px 0;
+}
+
+.done-heading {
+  margin: 0 0 16px;
+  font-size: 1.6rem;
+  color: #2e7d32;
+}
+
+.done-summary .total-card {
+  margin: 16px 0;
+  background: #2e7d32;
+}
+
+.done-summary p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+}
+
 /* --- Subsection preview screen --- */
 
 .preview-list {
