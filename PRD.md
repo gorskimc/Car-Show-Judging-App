@@ -6,13 +6,13 @@
 
 ## 1. Overview
 
-A phone-first installable web app (PWA) for judges at the "Corvettes on the Island" Corvette show. A single judge enters a car's registration number, walks through ~70 scoring sub-items recording ¼-point deductions with photo evidence, and submits a final 200-point score that ties back to the car's registration record. The same app is reusable across annual shows.
+A phone-first installable web app (PWA) for judges at the "Corvettes on the Island" Corvette show. A single judge enters a car's registration number, walks through ~70 scoring sub-items recording ¼-point deductions with optional photo evidence, and submits a final 200-point score that ties back to the car's registration record. The same app is reusable across annual shows.
 
 ## 2. Goals
 
 - Replace paper-based judging with a structured, photo-backed digital record.
 - Capture scores at the source so there's no post-show data entry.
-- Give judges photo evidence for every deduction so they can defend scores to car owners.
+- Let judges attach photo evidence to deductions that may need review after judging concludes.
 - Make the app reusable for the show year-over-year with no code rebuild — just configuration.
 
 ## 3. Non-Goals
@@ -28,7 +28,7 @@ A phone-first installable web app (PWA) for judges at the "Corvettes on the Isla
 - As a **judge**, I want to enter a car's registration number and see the owner / year / make / model / color so I can confirm I'm scoring the right car.
 - As a **judge**, I want to walk through scoring sections one at a time on my phone so I don't lose my place.
 - As a **judge**, I want to enter point deductions in ¼-point increments per sub-item so I can score precisely.
-- As a **judge**, I want the app to prompt me to take a photo whenever I record a deduction so I have evidence for that issue.
+- As a **judge**, I want to optionally attach a photo to any deduction so I can document an issue that might be challenged later.
 - As a **judge**, I want to review the full breakdown before submitting so I can fix mistakes.
 - As a **show organizer**, I want each year's results stored separately so I can review prior shows.
 
@@ -38,7 +38,7 @@ A phone-first installable web app (PWA) for judges at the "Corvettes on the Isla
 2. Judge enters a car's registration number. App looks it up and displays owner / year / make / model / color for confirmation.
 3. App presents the rubric one section at a time: Interior → Exterior → Engine Bay → Bonus.
 4. Each sub-item shows its name, max points, and a deduction input restricted to ¼-point increments.
-5. When deduction > 0, the app prompts the judge to take a photo using the phone's native camera; the photo is saved with the deduction.
+5. A photo may be taken to document a deduction, but is not required. Photos are intended for issues that may precipitate further review after judging is concluded; the judge decides whether each deduction needs one.
 6. App computes per-sub-item scores (max − deduction), subsection subtotals, section subtotals, and the overall score (out of 200) automatically.
 7. Save-as-you-go: each sub-item is saved to the server as soon as the judge moves to the next sub-item.
 8. Review screen shows the full breakdown with all attached photos before final submit.
@@ -59,7 +59,6 @@ A phone-first installable web app (PWA) for judges at the "Corvettes on the Isla
 ## 7. Success Metrics
 
 - ≥ 95% of judging sessions completed and submitted without judge-reported errors.
-- Every recorded deduction has a corresponding photo (validated at submit time).
 - Zero post-show data entry needed — all scores live in the database the moment the show ends.
 - App reused for the next year's show with no rewrite, only configuration changes.
 

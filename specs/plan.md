@@ -5,7 +5,7 @@
 
 ## 1. Goal
 
-Build, test locally, and deploy a working v1 of the Car Show Judging App: judges sign in on their phone, enter a registration number, score a car using the 200-point rubric with photo-backed deductions, and submit a complete record to Postgres. Reusable for the next annual show.
+Build, test locally, and deploy a working v1 of the Car Show Judging App: judges sign in on their phone, enter a registration number, score a car using the 200-point rubric and optionally documenting deductions with photos, and submit a complete record to Postgres. Reusable for the next annual show.
 
 ## 2. Approach
 
@@ -23,7 +23,7 @@ Build, test locally, and deploy a working v1 of the Car Show Judging App: judges
 5. **Build the auth route and login screen.** `routes/auth.js` (POST login: validate name + shared password, normalize name, store in session). `public/index.html` is the login screen. Verify a judge can log in.
 6. **Build the registration lookup.** `routes/registrations.js` (`GET /registrations/:participant` against `corvetteisland.customers` → firstname / lastname / year / make / model / bodytype / color / generation). Filter to `paid = true AND checkedin = true`. Add the "enter reg #, confirm car" screen as the first step after login. Note: judges enter what they call a "registration number" — internally that's the `customers.participant` column.
 7. **Build the rubric API and judging screens.** `routes/rubric.js` serves the rubric structure (sections including `scoring_mode`, subsections, items). `public/judging.html` walks one sub-item at a time and renders the input differently per mode: *"Points to deduct"* (default 0) for `'deduct'` sections; *"Bonus points to award"* (default 0) for `'award'` sections. Internally both store as `deduction_amount` — for award mode, the app converts via `deduction_amount = max_points − awarded`.
-8. **Add photo capture for deductions.** When the section's `scoring_mode = 'deduct'` AND `deduction_amount > 0`, prompt camera capture (`<input type="file" capture="environment">`). Store photos in client memory until submit. Validate at submit-time that every qualifying deduction has a photo. Award-mode photos are optional — judges may attach one to document an exceptional upgrade.
+8. **Add photo capture for deductions.** Add an optional photo affordance to every rubric item. The judge may attach zero or more photos via `<input type="file" capture="environment">` to document an issue (or upgrade) that may need review after judging. No photo is ever required to submit.
 9. **Build the score-submission flow.** `routes/sessions.js` (create session, save deductions) and `routes/photos.js` (upload via `multer` to `uploads/`, link to deduction). `public/review.html` shows computed totals before final submit.
 10. **Make it a real PWA.** Add `public/manifest.json`, placeholder icons in `public/icons/`, `public/service-worker.js` to cache the app shell. Verify "Add to Home Screen" works on iPhone and Android.
 11. **Add the active-show concept.** Admin endpoint or config flag to set the active show. All new sessions auto-attach to it.

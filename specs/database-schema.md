@@ -106,7 +106,6 @@ shows ──────────────────────┐
 **How `scoring_mode` works (Bonus polarity fix):**
 - **`'deduct'` mode** (default — used for Interior, Exterior, Engine Bay): the judge starts with full points and *subtracts* points for flaws. New `deductions` rows for items in this section are initialized with `deduction_amount = 0` (perfect). UI label: *"Points to deduct."*
 - **`'award'` mode** (used for Bonus): the judge starts with zero bonus and *awards* points for upgrades. New `deductions` rows for items in this section are initialized with `deduction_amount = frozen_max_points` (no bonus given). UI label: *"Bonus points to award."* The app translates the awarded value back to internal `deduction_amount = max_points − awarded` before saving, so the math (`score = max − deduction_amount`) and the database storage are identical to deduct mode.
-- **Photo validation interaction:** the PRD rule "every deduction must have a photo" applies only to **deduct-mode** rows where `deduction_amount > 0`. In award mode, photos are optional — the judge may still attach one to document an exceptional upgrade.
 
 ### 4.4 `rubric_subsections`
 
