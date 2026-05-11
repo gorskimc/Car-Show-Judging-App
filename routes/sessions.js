@@ -4,6 +4,12 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Test-mode toggle: when truthy, the checked-in filter is dropped on the
+// participant eligibility check below.
+const TEST_MODE = ['true', '1', 'yes'].includes(
+  (process.env.TEST_MODE || '').toLowerCase(),
+);
+
 // Helper: fetch a session row + its deductions (all 71 once seeded), with
 // photos pre-grouped onto each deduction row so the frontend can render
 // thumbnails without an extra round trip per item.
@@ -54,11 +60,13 @@ router.post('/', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'Invalid participant' });
   }
 
-  // Validate the car is paid + checked in (corvetteisland).
+  // Validate the car is paid (and checked in, unless TEST_MODE is on).
   const cust = await customersPool.query(
     `SELECT participant FROM public.customers
-      WHERE participant = $1 AND paid = true AND checkedin = true`,
-    [participant],
+      WHERE participant = $1
+        AND paid = true
+        AND (checkedin = true OR $2 = true)`,
+    [participant, TEST_MODE],
   );
   if (cust.rows.length === 0) {
     return res.status(404).json({ error: 'Car not found or not eligible' });

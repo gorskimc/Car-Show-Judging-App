@@ -4,6 +4,12 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Test-mode toggle: when truthy, the checked-in filter is dropped so a
+// tester can judge any paid car without the database being touched.
+const TEST_MODE = ['true', '1', 'yes'].includes(
+  (process.env.TEST_MODE || '').toLowerCase(),
+);
+
 // GET /api/registrations/:participant
 // Looks up a paid + checked-in car in the partner's corvetteisland database.
 // We deliberately collapse "not found" / "unpaid" / "not checked in" into a
@@ -20,8 +26,8 @@ router.get('/:participant', requireAuth, async (req, res) => {
        FROM public.customers
       WHERE participant = $1
         AND paid = true
-        AND checkedin = true`,
-    [participant],
+        AND (checkedin = true OR $2 = true)`,
+    [participant, TEST_MODE],
   );
 
   if (result.rows.length === 0) {

@@ -35,6 +35,17 @@ for (const key of ['SESSION_SECRET', 'EVENT_PASSWORD']) {
   }
 }
 
+// Loud warning if TEST_MODE is on — easy to spot in server logs.
+const TEST_MODE = ['true', '1', 'yes'].includes(
+  (process.env.TEST_MODE || '').toLowerCase(),
+);
+if (TEST_MODE) {
+  console.warn('');
+  console.warn('⚠️  TEST_MODE is ON — checked-in requirement is bypassed.');
+  console.warn('   Set TEST_MODE=FALSE in .env and restart before real judging.');
+  console.warn('');
+}
+
 app.use(express.json());
 
 app.use(
