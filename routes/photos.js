@@ -8,7 +8,12 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
+// On-disk location is configurable via UPLOAD_DIR (absolute or relative to
+// project root). Defaults to ./uploads if unset.
+const uploadDirEnv = process.env.UPLOAD_DIR || 'uploads';
+const UPLOAD_DIR = path.isAbsolute(uploadDirEnv)
+  ? uploadDirEnv
+  : path.join(__dirname, '..', uploadDirEnv);
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 // Random UUID filenames keep paths unguessable so we can serve uploads

@@ -61,8 +61,14 @@ app.use('/api/sessions', sessionsRoutes);
 app.use('/api', photosRoutes);
 
 // Public static serve for uploaded photos. Filenames are random UUIDs, so
-// URLs are unguessable; we deliberately don't gate this with auth (Q1a).
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// URLs are unguessable; we deliberately don't gate this with auth.
+// The on-disk location is configurable via the UPLOAD_DIR env var so the
+// production server can point at any directory (absolute or relative).
+const uploadDirEnv = process.env.UPLOAD_DIR || 'uploads';
+const uploadDir = path.isAbsolute(uploadDirEnv)
+  ? uploadDirEnv
+  : path.join(__dirname, uploadDirEnv);
+app.use('/uploads', express.static(uploadDir));
 
 // Static PWA shell
 app.use(express.static(path.join(__dirname, 'public')));
